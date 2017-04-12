@@ -9,26 +9,38 @@ const Person = require('../person').default
 describe('Elevator', function() {
   const elevator = new Elevator()
   const alex = new Person("Alex", 2)
+  const bob = new Person("Bob", 3)
+  const sue = new Person("Sue", 6)
 
   afterEach(function() {
     elevator.reset();
   });
 
-  xit('should bring a rider to a floor above their current floor', () => {
-    // Alex requests the elevator to take him from 2 to 5
+  it('should bring a rider to a floor above their current floor', () => {
     elevator.requestFloor(alex, 5)
-
-    // Assert the current floor of the elevator is the drop off floor
-    assert.equal(elevator.currentFloor, 5)
-    // Assert the current status of the elevator is idle after drop off
-    assert.equal(elevator.state, 'idle')
-    // Assert the total number of stops is 2 after drop off
-    assert.equal(elevator.stops, 2)
-    // Assert the total number of floors traversed
-    assert.equal(elevator.floors, 5)
+    assert.equal(elevator.state.currentFloor, 5)
+    assert.equal(elevator.state.status, 'idle')
+    assert.equal(elevator.state.stops, 2)
+    assert.equal(elevator.state.totalFloorsTraversed, 5)
   });
 
-  xit('should bring a rider to a floor below their current floor', () => {
+  it('should bring a rider to a floor below their current floor', () => {
+    elevator.requestFloor(alex, 0)
+    assert.equal(elevator.state.currentFloor, 0)
+    assert.equal(elevator.state.status, 'idle')
+    assert.equal(elevator.state.stops, 2)
+    assert.equal(elevator.state.totalFloorsTraversed, 4)
   });
-
+  it('should bring riders in order to their destination floor in order requested, so first bob then sue', () => {
+    elevator.requestFloor(bob, 9)
+    assert.equal(elevator.state.currentFloor, 9)
+    assert.equal(elevator.state.status, 'idle')
+    assert.equal(elevator.state.stops, 2)
+    assert.equal(elevator.state.totalFloorsTraversed, 9)
+    elevator.requestFloor(sue, 2)
+    assert.equal(elevator.state.currentFloor, 2)
+    assert.equal(elevator.state.status, 'idle')
+    assert.equal(elevator.state.stops, 4)
+    assert.equal(elevator.state.totalFloorsTraversed, 11)
+  });
 });
